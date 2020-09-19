@@ -1,26 +1,70 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useState } from 'react';
+import { connect } from 'react-redux';
+import { agregar, eliminar } from './reducers/finanzas';
 import './App.css';
+import Form from './components/Form';
+import Dashboard from './components/Dashboard';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+function Titulo(){
+  return <h2 className="title">Finanzly</h2>
 }
 
-export default App;
+function Finanzas({ finanzas, eliminarFinanza }){
+    return (
+      <div className="column is-half">
+          <table className="table is-stripped is-fullwidth">
+              <thead>
+                  <tr>
+                    <th>Descripción</th>
+                    <th>Cantidad</th>
+                    <th>Acciones</th>
+                  </tr>
+              </thead>
+              <tbody>
+                {finanzas.map((x,i) => (
+                  <tr key={i}>
+                      <td>{x.desc}</td>
+                      <td>{x.cant}</td>
+                      <td>
+                        <button 
+                          className="button is-warning" 
+                          onClick={() => eliminarFinanza(i)}>
+                          Eliminar
+                        </button>
+                      </td>
+                  </tr>
+                ))}
+              </tbody>
+          </table>
+      </div>
+    )
+}
+
+function App({ finanzas, agregarFinanza, eliminarFinanza }){
+    const total = finanzas.reduce((acc, el) => acc + el.cant, 0);
+
+    return(
+      <div className="section">
+        <div className="container">
+          <Titulo />
+          <Form agregarFinanza={agregarFinanza} />
+          <Dashboard valor={total} />
+          <Finanzas finanzas={finanzas} eliminarFinanza={eliminarFinanza} />
+        </div>
+      </div>
+    );
+}
+
+const mapStateToProps = state => {
+  return state;
+};
+
+const mapDispatchToProps = dispatch => ({
+  agregarFinanza: finanza => dispatch(agregar(finanza)),
+  eliminarFinanza: index => dispatch(eliminar(index))
+});
+
+export default connect (
+  mapStateToProps,
+  mapDispatchToProps
+)(App);
