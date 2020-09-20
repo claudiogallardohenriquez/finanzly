@@ -1,52 +1,24 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import { agregar, eliminar } from './reducers/finanzas';
+import { fetchUsuarios } from './reducers/usuarios';
 import './App.css';
 import Form from './components/Form';
 import Dashboard from './components/Dashboard';
+import Finanzas from './components/Finanzas'
 
 function Titulo(){
   return <h2 className="title">Finanzly</h2>
 }
 
-function Finanzas({ finanzas, eliminarFinanza }){
-    return (
-      <div className="column is-half">
-          <table className="table is-stripped is-fullwidth">
-              <thead>
-                  <tr>
-                    <th>Descripción</th>
-                    <th>Cantidad</th>
-                    <th>Acciones</th>
-                  </tr>
-              </thead>
-              <tbody>
-                {finanzas.map((x,i) => (
-                  <tr key={i}>
-                      <td>{x.desc}</td>
-                      <td>{x.cant}</td>
-                      <td>
-                        <button 
-                          className="button is-warning" 
-                          onClick={() => eliminarFinanza(i)}>
-                          Eliminar
-                        </button>
-                      </td>
-                  </tr>
-                ))}
-              </tbody>
-          </table>
-      </div>
-    )
-}
-
-function App({ finanzas, agregarFinanza, eliminarFinanza }){
+function App({ finanzas, agregarFinanza, eliminarFinanza, fetchUsuarios }){
     const total = finanzas.reduce((acc, el) => acc + el.cant, 0);
 
     return(
       <div className="section">
         <div className="container">
           <Titulo />
+          <button onClick={fetchUsuarios}>Fetch Usuarios</button>
           <Form agregarFinanza={agregarFinanza} />
           <Dashboard valor={total} />
           <Finanzas finanzas={finanzas} eliminarFinanza={eliminarFinanza} />
@@ -61,7 +33,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => ({
   agregarFinanza: finanza => dispatch(agregar(finanza)),
-  eliminarFinanza: index => dispatch(eliminar(index))
+  eliminarFinanza: index => dispatch(eliminar(index)),
+  fetchUsuarios: () => dispatch(fetchUsuarios())
 });
 
 export default connect (
